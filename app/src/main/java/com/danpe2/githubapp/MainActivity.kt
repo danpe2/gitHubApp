@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.view.Gravity
 import android.view.ViewGroup
+import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -45,6 +46,12 @@ class MainActivity : Activity() {
         )
 
         webView = WebView(this)
+
+        CookieManager.getInstance().apply {
+            setAcceptCookie(true)
+            setAcceptThirdPartyCookies(webView, true)
+        }
+
         webView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
@@ -69,6 +76,11 @@ class MainActivity : Activity() {
 
         applyDisplayMode(reload = false)
         webView.loadUrl(GITHUB_URL)
+    }
+
+    override fun onPause() {
+        CookieManager.getInstance().flush()
+        super.onPause()
     }
 
     private fun toggleDisplayMode() {
